@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ความคิดแบบระบบ - คู่มือเชิงโต้ตอบ</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#dbeafe',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#2563eb',
+                lineColor: '#2563eb',
+                secondaryColor: '#fef3c7',
+                tertiaryColor: '#f0fdf4'
+            }
+        });
+
+        // Function to render Mermaid diagrams
+        async function renderMermaidDiagrams(container) {
+            const mermaidElements = container.querySelectorAll('.mermaid');
+            for (const element of mermaidElements) {
+                // Only render if not already processed
+                if (!element.getAttribute('data-processed')) {
+                    try {
+                        const graphDefinition = element.textContent;
+                        const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).substr(2, 9), graphDefinition);
+                        element.innerHTML = svg;
+                        element.setAttribute('data-processed', 'true');
+                    } catch (error) {
+                        console.error('Mermaid rendering error:', error);
+                    }
+                }
+            }
+        }
+
+        // Initial render on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await renderMermaidDiagrams(document);
+        });
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .card h3 {
+            color: var(--text);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            font-size: 1.25rem;
+        }
+
+        .principle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .principle-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .principle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .principle-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .interactive-demo {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid var(--border);
+        }
+
+        .feedback-loop {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .loop-element {
+            background: white;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            min-width: 120px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .loop-element.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .iceberg {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+
+        .iceberg-level {
+            padding: 1.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .iceberg-level:hover {
+            transform: translateX(10px);
+        }
+
+        .level-1 {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+        }
+
+        .level-2 {
+            background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+            border-left: 4px solid #f59e0b;
+        }
+
+        .level-3 {
+            background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .level-4 {
+            background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%);
+            border-left: 4px solid #6366f1;
+        }
+
+        .archetype-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .archetype-card {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .archetype-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        .archetype-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .archetype-card.selected {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .archetype-detail {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: var(--bg);
+            border-radius: 8px;
+            animation: fadeIn 0.5s;
+        }
+
+        .archetype-detail.visible {
+            display: block;
+        }
+
+        .cld-canvas {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            margin: 1rem 0;
+            cursor: crosshair;
+        }
+
+        .tool-palette {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tool-btn {
+            padding: 0.75rem 1.25rem;
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .tool-btn:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .tool-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .leverage-points {
+            margin-left: 2rem;
+        }
+
+        .leverage-item {
+            padding: 1rem;
+            padding-left: 3rem;
+            margin-bottom: 0.75rem;
+            background: white;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .leverage-item .number {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .leverage-item strong {
+            color: var(--primary);
+        }
+
+        .example-card {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .example-card h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .resources-list {
+            list-style: none;
+        }
+
+        .resources-list li {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid var(--secondary);
+        }
+
+        .resources-list li::before {
+            content: "📚 ";
+            margin-right: 0.5rem;
+        }
+
+        .toggle-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .toggle-content.expanded {
+            max-height: 2000px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 500;
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-btn::before {
+            content: "▶";
+            transition: transform 0.3s;
+        }
+
+        .toggle-btn.expanded::before {
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .nav-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+            }
+
+            .principle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .simulation-controls {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .sim-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .sim-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .sim-btn:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .note {
+            background: #fef3c7;
+            border-left: 4px solid var(--accent);
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .note strong {
+            color: var(--accent);
+        }
+
+        .mermaid-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .mermaid,
+        pre.mermaid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font-family: inherit;
+        }
+
+        .diagram-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .diagram-description {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .mermaid-link-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            margin: 1rem auto;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .mermaid-link-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        .mermaid-link-btn::before {
+            content: "📊 ";
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <h1>ความคิดแบบระบบ (System Thinking)</h1>
+        <p>คู่มือฉบับสมบูรณ์เพื่อความเข้าใจระบบที่ซับซ้อนในงานนโยบายและนวัตกรรม</p>
+    </div>
+
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab(0)">ภาพรวม</button>
+            <button class="tab-btn" onclick="switchTab(1)">หลักการสำคัญ</button>
+            <button class="tab-btn" onclick="switchTab(2)">กรอบแนวคิด</button>
+            <button class="tab-btn" onclick="switchTab(3)">Archetypes</button>
+            <button class="tab-btn" onclick="switchTab(4)">จุดเปลี่ยนแปลง</button>
+            <button class="tab-btn" onclick="switchTab(5)">เครื่องมือและการปฏิบัติ</button>
+            <button class="tab-btn" onclick="switchTab(6)">ตัวอย่าง</button>
+            <button class="tab-btn" onclick="switchTab(7)">แหล่งเรียนรู้</button>
+        </div>
+
+        <!-- Tab 0: Overview -->
+        <div class="tab-content active">
+            <div class="card">
+                <h2>ความคิดแบบระบบคืออะไร?</h2>
+                <p>ความคิดแบบระบบเป็นแนวทางการมองเห็นภาพรวมเพื่อความเข้าใจว่าสิ่งต่างๆ ส่งผลต่อกันและกันอย่างไรภายในระบบทั้งหมด แทนที่จะวิเคราะห์ส่วนประกอบแต่ละส่วนแยกกัน ความคิดแบบระบบจะตรวจสอบความสัมพันธ์ รูปแบบ และโครงสร้างที่เชื่อมโยงองค์ประกอบต่างๆ เข้าด้วยกัน</p>
+
+                <div class="note">
+                    <strong>ทำไมสำคัญต่องานนโยบาย:</strong> ความท้าทายด้านนโยบายมักไม่ใช่ปัญหาเชิงเส้นตรงที่เรียบง่าย แต่มีหลายผู้มีส่วนได้ส่วนเสีย วงจร feedback ผลกระทบที่ไม่คาดคิด และความสัมพันธ์ที่เปลี่ยนแปลงตลอดเวลา ความคิดแบบระบบช่วยให้เรามองเห็นภาพใหญ่และออกแบบการแทรกแซงที่มีประสิทธิภาพมากขึ้น
+                </div>
+
+                <h3>คำถามสำคัญที่ความคิดแบบระบบช่วยตอบ</h3>
+                <ul style="margin-left: 2rem; margin-top: 1rem;">
+                    <li>องค์ประกอบต่างๆ ในสถานการณ์นี้เชื่อมโยงกันอย่างไร?</li>
+                    <li>วงจร feedback ใดบ้างที่เสริมหรือสมดุลพฤติกรรมนี้?</li>
+                    <li>เราควรแทรกแซงที่จุดใดเพื่อผลกระทบสูงสุด?</li>
+                    <li>มีผลกระทบที่ไม่คาดคิดได้หรือไม่?</li>
+                    <li>ระบบนี้จะเปลี่ยนแปลงอย่างไรเมื่อเวลาผ่านไป?</li>
+                </ul>
+
+                <h3>ความคิดแบบระบบ vs ความคิดเชิงเส้น</h3>
+                <div style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="background: #fee2e2; padding: 1.5rem; border-radius: 8px;">
+                        <h4 style="color: #991b1b; margin-bottom: 0.5rem;">ความคิดเชิงเส้น (Linear Thinking)</h4>
+                        <ul style="margin-left: 1.5rem;">
+                            <li>สาเหตุ → ผลลัพธ์</li>
+                            <li>ความสัมพันธ์แบบง่าย ตรงไปตรงมา</li>
+                            <li>ความเป็นสาเหตุทางเดียว</li>
+                            <li>การวิเคราะห์แบบคงที่</li>
+                            <li>มองส่วนประกอบแยกกัน</li>
+                        </ul>
+                    </div>
+                    <div style="background: #d1fae5; padding: 1.5rem; border-radius: 8px;">
+                        <h4 style="color: #065f46; margin-bottom: 0.5rem;">ความคิดแบบระบบ (System Thinking)</h4>
+                        <ul style="margin-left: 1.5rem;">
+                            <li>ความเป็นสาเหตุแบบวงกลม</li>
+                            <li>ความสัมพันธ์ที่ซับซ้อน เชื่อมโยงกัน</li>
+                            <li>วงจร feedback</li>
+                            <li>การวิเคราะห์แบบพลวัต</li>
+                            <li>พฤติกรรมของระบบทั้งหมด</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 1: Core Principles -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>หลักการสำคัญของความคิดแบบระบบ</h2>
+
+                <div class="principle-grid">
+                    <div class="principle-card">
+                        <h4>🔗 การเชื่อมโยง (Interconnectedness)</h4>
+                        <p>ทุกสิ่งเชื่อมโยงกับทุกสิ่ง การเปลี่ยนแปลงในส่วนหนึ่งของระบบจะส่งผลไปยังส่วนอื่น บ่อยครั้งในลักษณะที่ไม่คาดคิด</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>🔄 วงจร Feedback (Feedback Loops)</h4>
+                        <p>ระบบมีเส้นทางวงกลมที่ output กลับมาเป็น input สร้างรูปแบบการเสริม (เติบโต) หรือการสมดุล (รักษาสภาพ)</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>✨ การกำเนิด (Emergence)</h4>
+                        <p>ทั้งหมดมากกว่าผลรวมของส่วนย่อย พฤติกรรมระดับระบบเกิดจากปฏิสัมพันธ์ที่ไม่สามารถพยากรณ์จากการศึกษาส่วนประกอบแต่ละอย่างเพียงอย่างเดียว</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>🌊 ความซับซ้อนพลวัต (Dynamic Complexity)</h4>
+                        <p>ระบบวิวัฒนาการเมื่อเวลาผ่านไปในวิธีที่ไม่ชัดเจน การกระทำเดียวกันอาจให้ผลต่างกันขึ้นอยู่กับสถานะของระบบ</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>📈 ความไม่เป็นเส้นตรง (Non-linearity)</h4>
+                        <p>การเปลี่ยนแปลงเล็กน้อยอาจสร้างผลใหญ่ (และในทางกลับกัน) ความสัมพันธ์มักไม่ได้สัดส่วนหรือพยากรณ์ได้</p>
+                    </div>
+
+                    <div class="principle-card">
+                        <h4>⏱️ ความล่าช้า (Delays)</h4>
+                        <p>ช่วงเวลาระหว่างสาเหตุและผลลัพธ์อาจทำให้ความสัมพันธ์ไม่ชัดเจนและนำไปสู่การต่อต้านนโยบายหรือการเกินเป้าหมาย</p>
+                    </div>
+                </div>
+
+                <div class="interactive-demo">
+                    <h3>เดโมแบบโต้ตอบ: วงจร Feedback</h3>
+                    <p>คลิกปุ่มเพื่อดูว่าวงจร feedback เชิงเสริมทำงานอย่างไร</p>
+
+                    <div class="simulation-controls">
+                        <button class="sim-btn" onclick="startFeedbackLoop()">เริ่มวงจรเสริม</button>
+                        <button class="sim-btn" onclick="resetFeedbackLoop()">รีเซ็ต</button>
+                    </div>
+
+                    <div class="feedback-loop" id="feedbackLoop">
+                        <div class="loop-element" id="elem1">การเติบโตของประชากร</div>
+                        <div class="arrow">→</div>
+                        <div class="loop-element" id="elem2">การเกิดมากขึ้น</div>
+                        <div class="arrow">→</div>
+                        <div class="loop-element" id="elem3">ประชากรมากขึ้น</div>
+                        <div class="arrow">↻</div>
+                    </div>
+
+                    <p style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">
+                        <strong>วงจรเสริม (Reinforcing Loop - R):</strong> แต่ละองค์ประกอบขยายองค์ประกอบถัดไป สร้างการเติบโตหรือการลดลงแบบชี้กำลัง
+                    </p>
+                </div>
+
+                <h3 style="margin-top: 2rem;">แผนภาพระบบ (Visual System Maps)</h3>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">วงจร Feedback เชิงเสริม - การเติบโตของประชากร</div>
+                    <pre class="mermaid">
+graph LR
+    A[ประชากร] -->|+| B[การเกิด]
+    B -->|+| A
+    style A fill:#dbeafe,stroke:#2563eb,stroke-width:3px
+    style B fill:#dbeafe,stroke:#2563eb,stroke-width:3px
+                    </pre>
+                    <div class="diagram-description">
+                        ยิ่งประชากรมาก การเกิดก็มาก การเกิดมากทำให้ประชากรเพิ่ม สร้างการเติบโตแบบชี้กำลัง
+                    </div>
+                </div>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">วงจร Feedback เชิงสมดุล - การควบคุมอุณหภูมิ</div>
+                    <pre class="mermaid">
+graph LR
+    A[อุณหภูมิห้อง] -->|+| B[ช่องว่างจากอุณหภูมิที่ต้องการ]
+    B -->|+| C[การทำความร้อนหรือความเย็น]
+    C -->|+| A
+    style A fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style B fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style C fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+                    </pre>
+                    <div class="diagram-description">
+                        วงจรสมดุลมุ่งสู่ภาวะสมดุล: ระบบแก้ไขตัวเองเพื่อถึงอุณหภูมิที่ต้องการ
+                    </div>
+                </div>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">ระบบที่ซับซ้อน - การเติบโตจากปากต่อปาก</div>
+                    <pre class="mermaid">
+graph TD
+    A[ผู้ใช้] -->|+| B[ปากต่อปาก]
+    B -->|+| C[ผู้ใช้ใหม่]
+    C -->|+| A
+    A -->|+| D[ประสบการณ์ผู้ใช้]
+    D -->|+| B
+    A -->|-| E[ความแออัดของเครือข่าย]
+    E -->|-| D
+    style A fill:#dbeafe,stroke:#2563eb,stroke-width:3px
+    style B fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style C fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style D fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style E fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+                    </pre>
+                    <div class="diagram-description">
+                        วงจร feedback หลายวงโต้ตอบ: การเติบโตเสริมตัวเอง แต่ยังสร้างความแออัดที่สมดุลการเติบโต
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Frameworks -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>กรอบแนวคิดและเครื่องมือสำคัญ</h2>
+
+                <h3>โมเดลภูเขาน้ำแข็ง (The Iceberg Model)</h3>
+                <p>โมเดลภูเขาน้ำแข็งช่วยให้เรามองเหนือเหตุการณ์ระดับผิวเพื่อความเข้าใจรูปแบบ โครงสร้าง และ mental models ที่ลึกกว่านั้น</p>
+
+                <div class="iceberg">
+                    <div class="iceberg-level level-1" onclick="toggleIcebergLevel(1)">
+                        <strong>เหตุการณ์ (Events)</strong> (เกิดอะไรขึ้น?)
+                        <div class="toggle-content" id="iceberg-1">
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">ส่วนที่มองเห็น - เหตุการณ์และอาการเฉพาะ ตัวอย่าง: การจราจรติดขัดในวันหนึ่งๆ</p>
+                        </div>
+                    </div>
+
+                    <div class="iceberg-level level-2" onclick="toggleIcebergLevel(2)">
+                        <strong>รูปแบบและแนวโน้ม (Patterns & Trends)</strong> (เกิดอะไรขึ้นต่อเนื่อง?)
+                        <div class="toggle-content" id="iceberg-2">
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">พฤติกรรมที่เกิดซ้ำเมื่อเวลาผ่านไป ตัวอย่าง: การจราจรแย่ในชั่วโมงเร่งด่วนและแย่ลงใน 5 ปีที่ผ่านมา</p>
+                        </div>
+                    </div>
+
+                    <div class="iceberg-level level-3" onclick="toggleIcebergLevel(3)">
+                        <strong>โครงสร้างที่อยู่เบื้องหลัง (Underlying Structures)</strong> (อะไรกำหนดรูปแบบ?)
+                        <div class="toggle-content" id="iceberg-3">
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">โครงสร้างทางกายภาพ องค์กร และนโยบาย ตัวอย่าง: การขนส่งสาธารณะที่จำกัด การขยายตัวของเมือง โครงสร้างที่ขับเคลื่อนด้วยรถยนต์</p>
+                        </div>
+                    </div>
+
+                    <div class="iceberg-level level-4" onclick="toggleIcebergLevel(4)">
+                        <strong>Mental Models (แบบจำลองทางความคิด)</strong> (สมมติฐานและความเชื่ออะไรกำหนดระบบ?)
+                        <div class="toggle-content" id="iceberg-4">
+                            <p style="margin-top: 0.5rem; font-size: 0.9rem;">ค่านิยม ความเชื่อ และสมมติฐาน ตัวอย่าง: "การครอบครองรถยนต์คือสัญลักษณ์ของฐานะ" "ถนนมากขึ้นแก้ปัญหาจราจร"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note">
+                    <strong>ข้อคิดเชิงนโยบาย:</strong> นโยบายส่วนใหญ่มุ่งที่เหตุการณ์หรือรูปแบบ แต่การเปลี่ยนแปลงที่ยั่งยืนต้องแทรกแซงที่ระดับโครงสร้างหรือ Mental Models
+                </div>
+
+                <h3>แผนภาพเหตุและผล (Causal Loop Diagrams - CLD)</h3>
+                <p>เครื่องมือภาพสำหรับแม็ปความสัมพันธ์ feedback ในระบบ ตัวแปรเชื่อมโยงด้วยลูกศรแสดงความสัมพันธ์เชิงสาเหตุ ทำเครื่องหมาย + (ทิศทางเดียวกัน) หรือ - (ทิศทางตรงกันข้าม)</p>
+
+                <div class="example-card">
+                    <h4>ตัวอย่าง: กับดักความยากจน (Poverty Trap)</h4>
+                    <p><strong>รายได้ต่ำ</strong> → (-) <strong>การลงทุนการศึกษา</strong> → (-) <strong>ทักษะและโอกาส</strong> → (-) <strong>รายได้</strong></p>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">วงจรเสริม (R) นี้สร้างวงจรที่ความยากจนทำซ้ำตัวเอง</p>
+                </div>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">แผนภาพเหตุและผล - กับดักความยากจน</div>
+                    <pre class="mermaid">
+graph LR
+    A[รายได้] -->|-| B[การลงทุนการศึกษา]
+    B -->|-| C[ทักษะและโอกาส]
+    C -->|-| D[โอกาสในการทำงาน]
+    D -->|-| A
+    style A fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style B fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style C fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style D fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+                    </pre>
+                    <div class="diagram-description">
+                        วงจรเสริมที่ลิงก์ลบทั้งหมดยังสร้างการเสริม (ลบ 4 ตัว = วงจรบวก) การขาดจุดใดจุดหนึ่งสามารถขัดขวางวงจรได้
+                    </div>
+                </div>
+
+                <h3>แผนภาพ Stock และ Flow (Stock and Flow Diagrams)</h3>
+                <p>ติดตามการสะสม (stocks) และอัตราการเปลี่ยนแปลง (flows) เมื่อเวลาผ่านไป</p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li><strong>Stocks:</strong> ปริมาณที่สะสม (เช่น ประชากร ก๊าซเรือนกระจก ความรู้)</li>
+                    <li><strong>Flows:</strong> อัตราที่เปลี่ยน stock (เช่น อัตราการเกิด อัตราการปล่อยก๊าซ อัตราการเรียนรู้)</li>
+                    <li><strong>Feedback:</strong> Stocks มักส่งผลต่อ flow ของตัวเอง</li>
+                </ul>
+
+                <div class="mermaid-container">
+                    <div class="diagram-title">Stock และ Flow - แรงงานที่มีทักษะ</div>
+                    <pre class="mermaid">
+graph LR
+    A[โปรแกรมอบรม] -->|inflow| B[แรงงานที่มีทักษะ STOCK]
+    B -->|outflow| C[การเกษียณหรือเปลี่ยนอาชีพ]
+    B -.->|+| D[ประสิทธิผล]
+    D -.->|+| E[การเติบโตทางเศรษฐกิจ]
+    E -.->|+| A
+    style B fill:#dbeafe,stroke:#2563eb,stroke-width:4px
+    style A fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style C fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style D fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style E fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+                    </pre>
+                    <div class="diagram-description">
+                        Stock (สี่เหลี่ยม) สะสมจาก inflow และระบายผ่าน outflow ระดับ stock ส่งผลต่อตัวแปรอื่น (เส้นประ)
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Archetypes -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>รูปแบบระบบ (System Archetypes)</h2>
+                <p>รูปแบบทั่วไปที่ปรากฏในระบบต่างๆ การรู้จักเหล่านี้ช่วยวินิจฉัยปัญหาและระบุจุดแทรกแซง</p>
+
+                <div class="archetype-grid">
+                    <div class="archetype-card" onclick="selectArchetype(0)">
+                        <h4>ขีดจำกัดแห่งการเติบโต (Limits to Growth)</h4>
+                        <p>การเติบโตเข้าใกล้ขีดจำกัดเนื่องจากกระบวนการสมดุล</p>
+                    </div>
+
+                    <div class="archetype-card" onclick="selectArchetype(1)">
+                        <h4>เลี่ยงปัญหา (Shifting the Burden)</h4>
+                        <p>วิธีแก้ไขไวสร้างการพึ่งพา หลีกเลี่ยงทางออกที่แท้จริง</p>
+                    </div>
+
+                    <div class="archetype-card" onclick="selectArchetype(2)">
+                        <h4>โศกนาฏกรรมของทรัพยากรสาธารณะ (Tragedy of the Commons)</h4>
+                        <p>การกระทำรายบุคคลลดทรัพยากรร่วม</p>
+                    </div>
+
+                    <div class="archetype-card" onclick="selectArchetype(3)">
+                        <h4>วิธีแก้ที่ล้มเหลว (Fixes that Fail)</h4>
+                        <p>วิธีแก้ทำงานได้ในตอนแรกแต่สร้างปัญหาที่แย่ลงในภายหลัง</p>
+                    </div>
+
+                    <div class="archetype-card" onclick="selectArchetype(4)">
+                        <h4>ผู้ชนะได้ทุกอย่าง (Success to the Successful)</h4>
+                        <p>ผู้ชนะได้ทรัพยากรมากขึ้น ผู้แพ้ได้น้อยลง</p>
+                    </div>
+
+                    <div class="archetype-card" onclick="selectArchetype(5)">
+                        <h4>การยกระดับ (Escalation)</h4>
+                        <p>ฝ่ายแข่งขันตอบสนองด้วยกำลังมากขึ้น</p>
+                    </div>
+                </div>
+
+                <div class="archetype-detail" id="archetype-detail">
+                    <h3 id="archetype-title"></h3>
+                    <p id="archetype-description"></p>
+                    <h4>ตัวอย่างทางนโยบาย:</h4>
+                    <p id="archetype-example"></p>
+                    <h4>กลยุทธ์การแทรกแซง:</h4>
+                    <p id="archetype-intervention"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Leverage Points -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>จุดเปลี่ยนแปลง (Leverage Points) - จุดแทรกแซงในระบบ</h2>
+                <p>อิงกรอบของ Donella Meadows เรียงตามระดับ leverage จากต่ำไปสูง (น้อยไปมากประสิทธิผล)</p>
+
+                <div class="leverage-points" style="margin-top: 2rem;">
+                    <div class="leverage-item">
+                        <span class="number">12</span>
+                        <strong>Paradigms (ปรัชญา)</strong> - รูปแบบความคิดที่เป้าหมาย โครงสร้าง กฎเกิดขึ้น
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">11</span>
+                        <strong>Goals (เป้าหมาย)</strong> - วัตถุประสงค์หรือหน้าที่ของระบบ
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">10</span>
+                        <strong>Self-Organization (การจัดระเบียบตนเอง)</strong> - อำนาจในการเพิ่ม เปลี่ยน หรือวิวัฒนาโครงสร้างระบบ
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">9</span>
+                        <strong>Rules (กฎ)</strong> - สิ่งจูงใจ การลงโทษ ข้อจำกัด การอนุญาต
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">8</span>
+                        <strong>Information Flows (การไหลของข้อมูล)</strong> - ใครมีหรือไม่มีการเข้าถึงข้อมูล
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">7</span>
+                        <strong>Feedback Loops (วงจร Feedback)</strong> - ความแข็งแรงของ feedback สัมพันธ์กับผลกระทบ
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">6</span>
+                        <strong>Driving Flows (การไหลของวัสดุ)</strong> - การไหลของวัสดุและจุดตัดของวัสดุ
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">5</span>
+                        <strong>Buffers (บัฟเฟอร์)</strong> - รักษา stock ให้มั่นคงต่อ flow
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">4</span>
+                        <strong>Stock-and-Flow Structures (โครงสร้าง Stock และ Flow)</strong> - ระบบทางกายภาพและจุดเชื่อมต่อ
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">3</span>
+                        <strong>Delays (ความล่าช้า)</strong> - เวลาสัมพันธ์กับอัตราการเปลี่ยนระบบ
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">2</span>
+                        <strong>Balancing Loops (วงจรสมดุล)</strong> - ความแข็งแรงของการแก้ไข feedback
+                    </div>
+                    <div class="leverage-item">
+                        <span class="number">1</span>
+                        <strong>Reinforcing Loops (วงจรเสริม)</strong> - การเติบโตหรือการลดลงแบบทบต้น
+                    </div>
+                </div>
+
+                <div class="note" style="margin-top: 2rem;">
+                    <strong>ข้อคิดเชิงนโยบาย:</strong> นโยบายส่วนใหญ่มุ่งจุด leverage ด้านล่าง (ตัวเลข พารามิเตอร์) Leverage สูงสุดมาจากการเปลี่ยน paradigms และ mental models - การแทรกแซงที่ยากที่สุดแต่มีประสิทธิภาพสูงสุด
+                </div>
+
+                <div class="example-card" style="margin-top: 1.5rem;">
+                    <h4>ตัวอย่าง: นโยบายสภาพอากาศ</h4>
+                    <p><strong>Leverage ต่ำ:</strong> อัตราภาษีคาร์บอน (พารามิเตอร์)</p>
+                    <p><strong>Leverage ปานกลาง:</strong> เงินอุดหนุนพลังงานหมุนเวียน (flow) ข้อกำหนดรายงานคาร์บอน (ข้อมูล)</p>
+                    <p><strong>Leverage สูง:</strong> นิยาม "การเติบโต" ให้รวมสุขภาพสิ่งแวดล้อม (การเปลี่ยน paradigm)</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Tools & Practice -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>เครื่องมือและวิธีปฏิบัติจริง</h2>
+
+                <h3>1. การกำหนดขอบเขต (Boundary Setting)</h3>
+                <p>กำหนดอะไรอยู่ในและนอกระบบที่สนใจ</p>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li><strong>เชิงพื้นที่:</strong> พื้นที่ทางภูมิศาสตร์ (เช่น กรุงเทพฯ ไทย อาเซียน)</li>
+                    <li><strong>เชิงเวลา:</strong> กรอบเวลา (เช่น 5 ปีข้างหน้า ภาพรวมปี 2030)</li>
+                    <li><strong>เชิงหน้าที่:</strong> ด้านใดที่จะรวม (เช่น เศรษฐกิจ สังคม สิ่งแวดล้อม)</li>
+                </ul>
+
+                <h3>2. การระบุตัวแปร (Variable Identification)</h3>
+                <p>ระบุองค์ประกอบสำคัญและความสัมพันธ์:</p>
+                <ol style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li>ระดมความคิดตัวแปรที่เกี่ยวข้องทั้งหมด</li>
+                    <li>จัดกลุ่มตัวแปรที่เกี่ยวข้อง</li>
+                    <li>ระบุว่าเป็น stock (การสะสม) หรือ flow (อัตรา)</li>
+                    <li>บันทึกว่าตัวแปรใดเป็น endogenous (ในระบบ) หรือ exogenous (ภายนอก)</li>
+                </ol>
+
+                <h3>3. การแม็ปผู้มีส่วนได้ส่วนเสีย (Stakeholder Mapping)</h3>
+                <p>ระบุผู้กระทำและผลประโยชน์ อำนาจ และความสัมพันธ์ของพวกเขา</p>
+
+                <div class="interactive-demo">
+                    <h4>ประเภทผู้มีส่วนได้ส่วนเสีย</h4>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem;">
+                        <div style="background: white; padding: 1rem; border-radius: 6px; border-left: 3px solid #ef4444;">
+                            <strong style="color: #ef4444;">อำนาจสูง ผลประโยชน์สูง</strong>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">ผู้เล่นสำคัญ - มีส่วนร่วมใกล้ชิด</p>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 6px; border-left: 3px solid #f59e0b;">
+                            <strong style="color: #f59e0b;">อำนาจสูง ผลประโยชน์ต่ำ</strong>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">รักษาความพอใจ</p>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 6px; border-left: 3px solid #3b82f6;">
+                            <strong style="color: #3b82f6;">อำนาจต่ำ ผลประโยชน์สูง</strong>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">แจ้งให้ทราบ</p>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 6px; border-left: 3px solid #64748b;">
+                            <strong style="color: #64748b;">อำนาจต่ำ ผลประโยชน์ต่ำ</strong>
+                            <p style="font-size: 0.9rem; margin-top: 0.5rem;">เฝ้าสังเกต</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>4. เครื่องมือสร้าง CLD ง่ายๆ</h3>
+                <p>สร้างแผนภาพเหตุและผลของคุณเอง:</p>
+
+                <div class="interactive-demo">
+                    <div class="tool-palette">
+                        <button class="tool-btn active" onclick="selectTool('variable')">เพิ่มตัวแปร</button>
+                        <button class="tool-btn" onclick="selectTool('link')">วาดเส้น (+)</button>
+                        <button class="tool-btn" onclick="selectTool('negative')">วาดเส้น (-)</button>
+                        <button class="tool-btn" onclick="clearCanvas()">ล้าง</button>
+                    </div>
+                    <canvas id="cldCanvas" class="cld-canvas" width="800" height="400"></canvas>
+                    <p style="margin-top: 0.5rem; color: var(--text-light); font-size: 0.9rem;">
+                        คลิก "เพิ่มตัวแปร" และคลิกบน canvas เพื่อวางตัวแปร จากนั้นเลือกชนิดเส้นและคลิกระหว่างตัวแปรเพื่อเชื่อม
+                    </p>
+                </div>
+
+                <h3>5. กราฟพฤติกรรมเมื่อเวลาผ่านไป (Behavior Over Time Graphs)</h3>
+                <p>ร่างว่าตัวแปรสำคัญเปลี่ยนอย่างไรเมื่อเวลาผ่านไปก่อนดำดิ่งสู่ความสัมพันธ์เชิงสาเหตุ ช่วยระบุ:</p>
+                <ul style="margin-left: 2rem;">
+                    <li>รูปแบบการเติบโต (ชี้กำลัง เชิงเส้น)</li>
+                    <li>การสั่น (วงจร การ fluctuate)</li>
+                    <li>เส้น S-curve (ขีดจำกัดแห่งการเติบโต)</li>
+                    <li>จุดเปลี่ยนและธรณีประตู</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tab 6: Examples -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>ตัวอย่างทางนโยบายและกรณีศึกษา</h2>
+
+                <div class="example-card">
+                    <h4>ตัวอย่างที่ 1: การจราจรติดขัดในเมือง</h4>
+                    <div class="tag">ไทย</div>
+                    <div class="tag">การวางผังเมือง</div>
+
+                    <p><strong>บริบท:</strong> กรุงเทพฯ เผชิญการจราจรติดขัดเรื้อรัง การตอบสนองแบบดั้งเดิม: สร้างถนนมากขึ้น</p>
+
+                    <p style="margin-top: 1rem;"><strong>มุมมองระบบ:</strong></p>
+                    <p style="margin-left: 1rem;">ถนนมากขึ้น → เวลาเดินทางลดลง → คนเลือกใช้รถมากขึ้น → รถมากขึ้น → การจราจกติดขัดกลับมา (มักแย่กว่าเดิม)</p>
+
+                    <p style="margin-top: 1rem;"><strong>ข้อคิดสำคัญ:</strong> นี่คือ archetype "Fixes that Fail" วิธีแก้ขยายปัญหาผ่านความต้องการที่เกิดจากการสร้างถนน</p>
+
+                    <div class="mermaid-container" style="margin-top: 1rem;">
+                        <div class="diagram-title">แผนที่ระบบ: การจราจรติดขัดในกรุงเทพฯ - "Fixes that Fail"</div>
+                        <pre class="mermaid">
+graph TD
+    A[การจราจกติดขัด] --> B[สร้างถนนมากขึ้น]
+    B --> C[เวลาเดินทางลดลง]
+    C -->|+| D[คนเลือกใช้รถมากขึ้น]
+    D -->|+| E[การครอบครองรถ]
+    E -->|+| F[รถบนถนน]
+    F -->|+| A
+    E -->|-| G[ผู้โดยสารขนส่งสาธารณะ]
+    G -->|-| H[คุณภาพบริการขนส่ง]
+    H -->|-| I[การลงทุนขนส่งสาธารณะ]
+    I -->|-| G
+    B --> J[การขยายตัวของเมือง]
+    J -->|+| K[ระยะทางเดินทาง]
+    K -->|+| A
+    style A fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style B fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style C fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style D fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style E fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style F fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style G fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style H fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style I fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style J fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style K fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+                        </pre>
+                        <div class="diagram-description">
+                            วงจรเสริมหลายวง: สร้างถนนสร้างความต้องการและอ่อนแอขนส่งสาธารณะและส่งเสริมการขยายตัว ทั้งหมดทำให้การจราจรแย่ลงในระยะยาว
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>การแทรกแซงเชิงระบบ:</strong></p>
+                    <ul style="margin-left: 2rem;">
+                        <li>เปลี่ยน paradigm: ความเคลื่อนไหวเป็นบริการ ไม่ใช่การครอบครองรถ</li>
+                        <li>เปลี่ยนสิ่งจูงใจ: ราคาคับคั่ง ค่าจอดรถ</li>
+                        <li>เสริมวงจรสมดุล: ลงทุนขนส่งสาธารณะ โครงสร้างปั่นจักรยาน</li>
+                        <li>แก้ mental models: ฐานะไม่ได้ผูกกับการครอบครองรถ</li>
+                    </ul>
+                </div>
+
+                <div class="example-card">
+                    <h4>ตัวอย่างที่ 2: ความจุของระบบสุขภาพ</h4>
+                    <div class="tag">COVID-19</div>
+                    <div class="tag">สาธารณสุข</div>
+
+                    <p><strong>บริบท:</strong> ความจุโรงพยาบาลระหว่างการระบาด</p>
+
+                    <p style="margin-top: 1rem;"><strong>พลวัตระบบ:</strong></p>
+                    <ul style="margin-left: 1rem;">
+                        <li><strong>Stock:</strong> เตียงโรงพยาบาล ความจุ ICU บุคลากรทางการแพทย์</li>
+                        <li><strong>Inflow:</strong> การฝึกบุคลากรใหม่ การสร้างสิ่งอำนวยความสะดวก (ช้า)</li>
+                        <li><strong>Outflow:</strong> การเผชิญความเครียด เกษียณ (เร่งภายใต้ความเครียด)</li>
+                        <li><strong>วงจรสำคัญ:</strong> งานเกิน → ความเครียด → บุคลากรลด → งานเกิน (เสริม)</li>
+                    </ul>
+
+                    <div class="mermaid-container" style="margin-top: 1rem;">
+                        <div class="diagram-title">แผนที่ระบบ: วิกฤตความจุสุขภาพ</div>
+                        <pre class="mermaid">
+graph TD
+    A[กรณี COVID] -->|+| B[ผู้ป่วยนอกโรงพยาบาล]
+    B -->|+| C[การเต็มเตียง]
+    C -->|+| D[ภาระงานต่อบุคลากร]
+    D -->|+| E[ความเครียดบุคลากร]
+    E -->|+| F[บุคลากรลาออก]
+    F -->|-| G[บุคลากรทางการแพทย์ที่มี]
+    G -->|-| D
+    H[โปรแกรมการฝึก] --> G
+    I[มาตรการสาธารณสุข] -->|-| A
+    C -->|+| J[คุณภาพการดูแลลดลง]
+    J -->|+| K[ผลผู้ป่วยแย่ลง]
+    K -->|+| L[ระยะเวลาพัก]
+    L -->|+| C
+    D -->|-| J
+    style A fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style B fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style C fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style D fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style E fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style F fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style G fill:#dbeafe,stroke:#2563eb,stroke-width:3px
+    style H fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style I fill:#d1fae5,stroke:#10b981,stroke-width:3px
+    style J fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style K fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style L fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+                        </pre>
+                        <div class="diagram-description">
+                            วงจรเชิงลบหลายวง: วงความเครียดบุคลากร วงคุณภาพลดลง Leverage สูงสุด: ป้องกันกรณี (I) ไม่ใช่เพิ่มความจุ (H)
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>จุด Leverage:</strong></p>
+                    <ul style="margin-left: 2rem;">
+                        <li>ต่ำ: เพิ่มเตียง (ไม่ช่วยโดยไม่มีบุคลากร)</li>
+                        <li>ปานกลาง: เพิ่มบัฟเฟอร์ (สำรองอุปกรณ์ อบรมข้ามสายงาน)</li>
+                        <li>สูง: ป้องกัน inflow (มาตรการสาธารณสุขแข็งแรง วัคซีน)</li>
+                    </ul>
+                </div>
+
+                <div class="example-card">
+                    <h4>ตัวอย่างที่ 3: โปรแกรมเงินอุดหนุนการเกษตร</h4>
+                    <div class="tag">การพัฒนาชนบท</div>
+                    <div class="tag">เศรษฐกิจ</div>
+
+                    <p><strong>บริบท:</strong> เงินอุดหนุนรัฐบาลสำหรับการผลิตพืช</p>
+
+                    <p style="margin-top: 1rem;"><strong>วงจรที่ตั้งใจ:</strong></p>
+                    <p style="margin-left: 1rem;">เงินอุดหนุน → รายได้เกษตรกรสูงขึ้น → คุณภาพชีวิตดีขึ้น</p>
+
+                    <p style="margin-top: 1rem;"><strong>วงจรที่ไม่คาดคิด:</strong></p>
+                    <ul style="margin-left: 1rem;">
+                        <li>เงินอุดหนุน → ผลิตเกิน → ราคาตลาดต่ำลง → ต้องการเงินอุดหนุนมากขึ้น (เสริม)</li>
+                        <li>เงินอุดหนุน → พืชเดียว → ดินเสื่อม → ผลผลิตต่ำ → ต้องการเงินอุดหนุนมากขึ้น</li>
+                        <li>เงินอุดหนุน → ความหลากหลายตลาดลดลง → ความเสี่ยงต่อการสั่นคลอนราคา</li>
+                    </ul>
+
+                    <div class="mermaid-container" style="margin-top: 1rem;">
+                        <div class="diagram-title">แผนที่ระบบ: กับดักเงินอุดหนุนการเกษตร</div>
+                        <pre class="mermaid">
+graph TD
+    A[เงินอุดหนุนรัฐบาล] -->|+| B[ปริมาณการผลิต]
+    B -->|+| C[อุปทานตลาด]
+    C -->|-| D[ราคาตลาด]
+    D -->|-| E[รายได้เกษตรกร]
+    E --> A
+    A -->|+| F[การเกษตรพืชเดียว]
+    F -->|-| G[สุขภาพดิน]
+    G -->|-| H[ผลผลิตพืช]
+    H -->|-| E
+    H -->|+| A
+    F -->|-| I[ความหลากหลายพืช]
+    I -->|-| J[ความยืดหยุ่นตลาด]
+    J -->|-| K[ความผันผวนราคา]
+    K -->|-| E
+    A -->|-| L[นวัตกรรมตลาด]
+    L -->|-| M[ผลิตภัณฑ์เพิ่มมูลค่า]
+    M -->|-| E
+    style A fill:#fef3c7,stroke:#f59e0b,stroke-width:3px
+    style B fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style C fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style D fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style E fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style F fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style G fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style H fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style I fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style J fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style K fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style L fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style M fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+                        </pre>
+                        <div class="diagram-description">
+                            "Shifting the Burden": เงินอุดหนุนให้การบรรเทารวดเร็วแต่สร้างการพึ่งพาผ่านวงจรเสริมหลายวง ทำลายทางออกพื้นฐาน
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>การออกแบบระบบใหม่:</strong> เปลี่ยนจากเงินอุดหนุนการผลิตเป็นการจ่ายเพื่อบริการระบบนิเวศ การสนับสนุนความหลากหลายพืช การพัฒนาโครงสร้างพื้นฐานตลาด</p>
+                </div>
+
+                <div class="example-card">
+                    <h4>ตัวอย่างที่ 4: คุณภาพ vs การเข้าถึงการศึกษา</h4>
+                    <div class="tag">SDG 4</div>
+                    <div class="tag">การศึกษา</div>
+
+                    <p><strong>Archetype:</strong> "Shifting the Burden"</p>
+
+                    <p style="margin-top: 1rem;"><strong>อาการ:</strong> ผลการเรียนรู้ต่ำ</p>
+
+                    <p style="margin-top: 1rem;"><strong>วิธีแก้อาการ:</strong> ลดมาตรฐาน ข้อสอบง่ายขึ้น → อัตราสอบผ่านสูงขึ้น (วิธีแก้ไว)</p>
+
+                    <p style="margin-top: 1rem;"><strong>วิธีแก้พื้นฐาน:</strong> การฝึกอบรมครู ปฏิรูปหลักสูตร ทรัพยากรการเรียนรู้ → การเรียนรู้จริงดีขึ้น (ใช้เวลา)</p>
+
+                    <div class="mermaid-container" style="margin-top: 1rem;">
+                        <div class="diagram-title">แผนที่ระบบ: คุณภาพการศึกษา - "Shifting the Burden"</div>
+                        <pre class="mermaid">
+graph TD
+    A[ผลการเรียนรู้ต่ำ] --> B[ความกดดันทางการเมือง]
+    B --> C[ลดมาตรฐาน]
+    C -->|+| D[อัตราสอบผ่านสูงขึ้น]
+    D -->|-| B
+    B --> E[การฝึกอบรมครู]
+    E -->|+| F[คุณภาพการสอน]
+    F -->|+| G[การเรียนรู้จริง]
+    G -->|-| A
+    C -->|-| H[การพัฒนาทักษะ]
+    H -->|-| I[สมรรถนะบัณฑิต]
+    I -->|-| J[ความพอใจนายจ้าง]
+    J -->|+| K[เงินเฟ้อทางวุฒิ]
+    K -->|-| L[มูลค่าปริญญา]
+    L -->|+| A
+    C --> M[การรับรู้คุณภาพ]
+    M -->|-| N[ความไว้วางใจการศึกษาสาธารณะ]
+    N -->|-| E
+    style A fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style B fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style C fill:#fee2e2,stroke:#ef4444,stroke-width:3px
+    style D fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style E fill:#d1fae5,stroke:#10b981,stroke-width:3px
+    style F fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style G fill:#d1fae5,stroke:#10b981,stroke-width:2px
+    style H fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style I fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style J fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style K fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style L fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style M fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+    style N fill:#fee2e2,stroke:#ef4444,stroke-width:2px
+                        </pre>
+                        <div class="diagram-description">
+                            "Shifting the Burden" แบบคลาสสิก: วิธีแก้ไว (C) บรรเทาความกดดันแต่ทำลายวิธีแก้พื้นฐาน (E) และสร้างผลข้างเคียงที่ทำให้ปัญหาแย่ลง
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 1rem;"><strong>ผลข้างเคียง:</strong> วิธีแก้ไวทำลายคุณภาพ → บัณฑิตขาดทักษะ → ความกดดันเงินเฟ้อทางวุฒิมากขึ้น</p>
+
+                    <p style="margin-top: 1rem;"><strong>การแทรกแซง:</strong> เน้นผลการเรียนรู้มากกว่าวุฒิ ลงทุนในทางออกพื้นฐาน ต้านทานความกดดันสำหรับวิธีแก้ไว</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 7: Resources -->
+        <div class="tab-content">
+            <div class="card">
+                <h2>แหล่งเรียนรู้และการพัฒนาต่อยอด</h2>
+
+                <h3>หนังสือสำคัญ</h3>
+                <ul class="resources-list">
+                    <li><strong>Thinking in Systems: A Primer</strong> โดย Donella Meadows - แนะนำความคิดแบบระบบอย่างสมบูรณ์</li>
+                    <li><strong>The Fifth Discipline</strong> โดย Peter Senge - ความคิดแบบระบบสำหรับองค์กรและการเรียนรู้</li>
+                    <li><strong>Systems Thinking for Social Change</strong> โดย David Peter Stroh - ประยุกต์กับปัญหาสังคมและนโยบาย</li>
+                    <li><strong>Leverage Points: Places to Intervene in a System</strong> โดย Donella Meadows - เรียงความสั้นทรงพลังเกี่ยวกับกลยุทธ์การแทรกแซง</li>
+                </ul>
+
+                <h3>เครื่องมือและซอฟต์แวร์ออนไลน์</h3>
+                <ul class="resources-list">
+                    <li><strong>Kumu.io</strong> - การสร้างแผนที่ระบบและการแสดงเครือข่ายบนเว็บ</li>
+                    <li><strong>Loopy</strong> - เครื่องมือง่ายๆ เล่นๆ สร้างแผนภาพเหตุและผล</li>
+                    <li><strong>Vensim</strong> - ซอฟต์แวร์การจำลองระบบพลวัตระดับมืออาชีพ</li>
+                    <li><strong>InsightMaker</strong> - การจำลองระบบพลวัตออนไลน์ฟรี</li>
+                    <li><strong>Miro/Mural</strong> - ไวท์บอร์ดร่วมมือสำหรับเวิร์กช็อปการสร้างแผนที่ระบบ</li>
+                </ul>
+
+                <h3>อภิธานศัพท์แนวคิดสำคัญ</h3>
+                <div style="margin-top: 1rem;">
+                    <button class="toggle-btn" onclick="toggleGlossary(0)">Stock (สะสม)</button>
+                    <div class="toggle-content" id="glossary-0" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        ปริมาณที่สะสมสามารถวัดได้ในจุดใดๆ ของเวลา ตัวอย่าง: ประชากร เงินในบัญชี ก๊าซเรือนกระจกในบรรยากาศ
+                    </div>
+
+                    <button class="toggle-btn" onclick="toggleGlossary(1)">Flow (ไหล)</button>
+                    <div class="toggle-content" id="glossary-1" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        อัตราการเปลี่ยนที่เติมหรือระบาย stock เมื่อเวลาผ่านไป ตัวอย่าง: อัตราการเกิด อัตราการใช้จ่าย อัตราการปล่อยก๊าซ
+                    </div>
+
+                    <button class="toggle-btn" onclick="toggleGlossary(2)">Reinforcing Loop (วงจรเสริม - R)</button>
+                    <div class="toggle-content" id="glossary-2" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        วงจร feedback ที่ขยายการเปลี่ยน - นำไปสู่การเติบโตหรือการลดลงแบบชี้กำลัง เรียกว่า "positive feedback" หรือ "วงจรชั่ว/ดี"
+                    </div>
+
+                    <button class="toggle-btn" onclick="toggleGlossary(3)">Balancing Loop (วงจรสมดุล - B)</button>
+                    <div class="toggle-content" id="glossary-3" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        วงจร feedback ที่ต่อต้านการเปลี่ยนและมุ่งสู่ความมั่นคงหรือภาวะสมดุล เรียกว่า "negative feedback" หรือ "แก้ไขตัวเอง"
+                    </div>
+
+                    <button class="toggle-btn" onclick="toggleGlossary(4)">Delays (ความล่าช้า)</button>
+                    <div class="toggle-content" id="glossary-4" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        ช่วงเวลาระหว่างสาเหตุและผลลัพธ์ในระบบ ความล่าช้าอาจก่อให้เกิดการสั่น การเกินเป้า หรือทำให้ความสัมพันธ์ไม่ชัดเจน
+                    </div>
+
+                    <button class="toggle-btn" onclick="toggleGlossary(5)">Leverage Point (จุดเปลี่ยนแปลง)</button>
+                    <div class="toggle-content" id="glossary-5" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        จุดในระบบที่การเปลี่ยนเล็กน้อยสามารถสร้างการเปลี่ยนแปลงใหญ่ จุด leverage สูงเปลี่ยนยากแต่มีผลกระทบมาก
+                    </div>
+
+                    <button class="toggle-btn" onclick="toggleGlossary(6)">Mental Model (แบบจำลองความคิด)</button>
+                    <div class="toggle-content" id="glossary-6" style="padding: 0.5rem 0 1rem 1.5rem;">
+                        สมมติฐาน ความเชื่อ และค่านิยมที่กำหนดว่าผู้คนมองเห็นและโต้ตอบกับระบบอย่างไร มักเป็นจุด leverage ลึกที่สุด
+                    </div>
+                </div>
+
+                <h3>แบบฝึกหัดปฏิบัติ</h3>
+                <div class="example-card">
+                    <h4>แบบฝึกหัดที่ 1: ระบบการเงินส่วนบุคคล</h4>
+                    <p>แม็ปรายได้และการใช้จ่ายส่วนบุคคลเป็นระบบ:</p>
+                    <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>ระบุ stock (ออม หนี้) และ flow (รายได้ ค่าใช้จ่าย)</li>
+                        <li>วาดวงจรเชิงสาเหตุ (เช่น หนี้ → ดอกเบี้ย → หนี้มากขึ้น)</li>
+                        <li>หาวงจรสมดุล (ข้อจำกัดงบประมาณ) และวงจรเสริม (ผลตอบแทนการลงทุน)</li>
+                        <li>ระบุจุดแทรกแซง leverage สูง</li>
+                    </ol>
+                </div>
+
+                <div class="example-card">
+                    <h4>แบบฝึกหัดที่ 2: วิเคราะห์ข่าว</h4>
+                    <p>นำเหตุการณ์ปัจจุบันและใช้โมเดลภูเขาน้ำแข็ง:</p>
+                    <ol style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>เหตุการณ์คืออะไร (ปลายยอดภูเขา)?</li>
+                        <li>รูปแบบใดนำไปสู่เหตุการณ์นี้?</li>
+                        <li>โครงสร้างใดเปิดให้เกิดรูปแบบเหล่านี้?</li>
+                        <li>Mental models ใดอยู่เบื้องหลังโครงสร้าง?</li>
+                    </ol>
+                </div>
+
+                <div class="note">
+                    <strong>บริบท UNDP ประเทศไทย:</strong> พิจารณาเชื่อมต่อกับ Thailand Policy Lab เครือข่าย UNDP Accelerator Labs และผู้เชี่ยวชาญความคิดแบบระบบระดับภูมิภาคสำหรับการเรียนรู้และการประยุกต์ร่วมกัน
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        async function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('active');
+                    contents[i].classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                    contents[i].classList.remove('active');
+                }
+            });
+
+            // Re-render Mermaid diagrams in the active tab
+            const activeContent = contents[index];
+            await renderMermaidDiagrams(activeContent);
+        }
+
+        // Feedback loop animation
+        let feedbackInterval;
+        function startFeedbackLoop() {
+            let current = 0;
+            const elements = ['elem1', 'elem2', 'elem3'];
+
+            clearInterval(feedbackInterval);
+            elements.forEach(id => document.getElementById(id).classList.remove('active'));
+
+            feedbackInterval = setInterval(() => {
+                elements.forEach(id => document.getElementById(id).classList.remove('active'));
+                document.getElementById(elements[current]).classList.add('active');
+                current = (current + 1) % elements.length;
+            }, 1000);
+        }
+
+        function resetFeedbackLoop() {
+            clearInterval(feedbackInterval);
+            const elements = ['elem1', 'elem2', 'elem3'];
+            elements.forEach(id => document.getElementById(id).classList.remove('active'));
+        }
+
+        // Iceberg toggle
+        function toggleIcebergLevel(level) {
+            const content = document.getElementById(`iceberg-${level}`);
+            content.classList.toggle('expanded');
+        }
+
+        // Archetype selection
+        const archetypes = [
+            {
+                title: "ขีดจำกัดแห่งการเติบโต (Limits to Growth)",
+                description: "กระบวนการเสริม (การเติบโต) ทำงานโดยไม่มีการตรวจสอบจนเข้าใกล้ขีดจำกัดหรือข้อบังคับ ซึ่งกระตุ้นกระบวนการสมดุลที่ชะลอหรือหยุดการเติบโต",
+                example: "การพัฒนาเศรษฐกิจขับเคลื่อนการบริโภคทรัพยากร ซึ่งในที่สุดชนกับขีดจำกัดสิ่งแวดล้อม (มลพิษ การลดลงของทรัพยากร) ควบคุมการเติบโตต่อไป",
+                intervention: "หากขีดจำกัดไม่พึงประสงค์ ให้อ่อนแอ หากมีขีดจำกัดที่ยั่งยืน เปลี่ยนจากการเติบ๺ตไปเป็นการปรับให้เหมาะสม วางแผนสำหรับขีดจำกัดอย่างเฉพาะเจาะจงมากกว่าชน"
+            },
+            {
+                title: "เลี่ยงปัญหา (Shifting the Burden)",
+                description: "อาการปัญหาได้รับการแก้ไขด้วยวิธีแก้ไวที่บรรเทาอาการแต่ไม่ได้แก้สาเหตุที่แท้จริง ทางออกพื้นฐานยากหรือช้ากว่า จึงถูกละเลย",
+                example: "การรักษาความยากจนด้วยความช่วยเหลือฉุกเฉิน (อาการ) มากกว่าการลงทุนในการศึกษาและการสร้างงาน (พื้นฐาน) ความช่วยเหลือสร้างการพึ่งพา",
+                intervention: "มุ่งเน้นทางออกพื้นฐานแม้ยาก ค่อยๆ ลดการพึ่งพาวิธีแก้อาการ ทำให้ผลข้างเคียงของวิธีแก้ไวมองเห็น"
+            },
+            {
+                title: "โศกนาฏกรรมของทรัพยากรสาธารณะ (Tragedy of the Commons)",
+                description: "เมื่อบุคคลได้ประโยชน์จากทรัพยากรร่วมโดยไม่จ่ายต้นทุนเต็ม เขาใช้เกิน ทำให้เสื่อมสำหรับทุกคน",
+                example: "การตกปลาเกิน: ชาวประมงได้ประโยชน์จากการจับปลามากขึ้น แต่การจับทั้งหมดลดปลา ทำร้ายชาวประมงทุกคนในระยะยาว",
+                intervention: "ควบคุมทรัพยากรร่วม (โควตา ใบอนุญาต) แบ่งกรรมสิทธิ์หรือสร้างความชัดเจนของกรรมสิทธิ์ ให้การศึกษาเกี่ยวกับผลกระทบระยะยาว สร้างบรรทัดฐานทางสังคมต่อการใช้เกิน"
+            },
+            {
+                title: "วิธีแก้ที่ล้มเหลว (Fixes that Fail)",
+                description: "วิธีแก้ทำงานในระยะสั้น แต่มีผลข้างเคียงที่ทำให้ปัญหาแย่ลงเมื่อเวลาผ่านไป",
+                example: "สร้างถนนมากขึ้นเพื่อแก้การจราจรสร้างความต้องการที่เกิดจากถนน นำไปสู่รถมากขึ้นและการจราจกแย่ลง ยาปฏิชีวนะสร้างแบคทีเรียทนทาน",
+                intervention: "คาดการณ์ผลข้างเคียง ออกแบบเพื่อผลระยะยาว พิจารณา feedback ระบบก่อนใช้วิธีแก้"
+            },
+            {
+                title: "ผู้ชนะได้ทุกอย่าง (Success to the Successful)",
+                description: "ความสำเร็จของฝ่ายหนึ่งมอบทรัพยากร/ความได้เปรียบมากขึ้น ให้พวกเขาสำเร็จต่อไป อีกฝ่ายล้าหลังในวงจรความไม่เท่าเทียมที่เสริม",
+                example: "โรงเรียนร่ำรวยดึงครูและนักเรียนดีขึ้น ได้เงินมากขึ้น ดียิ่งขึ้น โรงเรียนจนอ่อนแอลงหมุนเวียนลง",
+                intervention: "ขัดขวางวงจรเสริม: กระจายทรัพยากรใหม่ ทำสนามเดิม เซตขีดจำกัดการสะสมความได้เปรียบ ลงทุนในผู้ด้อยโอกาส"
+            },
+            {
+                title: "การยกระดับ (Escalation)",
+                description: "สองฝ่ายแข่งขัน แต่ละฝ่ายตอบสนองการกระทำของอีกฝ่ายด้วยกำลังมากขึ้น สร้างวงจรเสริมของการยกระดับ",
+                example: "การแข่งขันอาวุธ: แต่ละประเทศสร้างอาวุธเพื่อรู้สึกปลอดภัย ขู่อีกฝ่ายให้สร้างอาวุธมากขึ้น สงครามการตลาดระหว่างคู่แข่งขัน",
+                intervention: "ฝ่ายหนึ่งลดระดับอย่างเอกเคราะห์ สร้างกฎ/สนธิสัญญา มุ่งเน้นประสิทธิภาพสัมบูรณ์ ไม่ใช่การแข่งขันสัมพัทธ์"
+            }
+        ];
+
+        function selectArchetype(index) {
+            // Update card selection
+            const cards = document.querySelectorAll('.archetype-card');
+            cards.forEach((card, i) => {
+                if (i === index) {
+                    card.classList.add('selected');
+                } else {
+                    card.classList.remove('selected');
+                }
+            });
+
+            // Show detail
+            const detail = document.getElementById('archetype-detail');
+            const archetype = archetypes[index];
+
+            document.getElementById('archetype-title').textContent = archetype.title;
+            document.getElementById('archetype-description').textContent = archetype.description;
+            document.getElementById('archetype-example').textContent = archetype.example;
+            document.getElementById('archetype-intervention').textContent = archetype.intervention;
+
+            detail.classList.add('visible');
+        }
+
+        // CLD Canvas
+        let currentTool = 'variable';
+        let variables = [];
+        let links = [];
+        let selectedVar = null;
+
+        function selectTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        const canvas = document.getElementById('cldCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (currentTool === 'variable') {
+                const name = prompt('ชื่อตัวแปร:');
+                if (name) {
+                    variables.push({ x, y, name });
+                    drawCanvas();
+                }
+            } else if (currentTool === 'link' || currentTool === 'negative') {
+                const clickedVar = findVariable(x, y);
+                if (clickedVar !== null) {
+                    if (selectedVar === null) {
+                        selectedVar = clickedVar;
+                    } else {
+                        links.push({
+                            from: selectedVar,
+                            to: clickedVar,
+                            type: currentTool === 'link' ? '+' : '-'
+                        });
+                        selectedVar = null;
+                        drawCanvas();
+                    }
+                }
+            }
+        });
+
+        function findVariable(x, y) {
+            for (let i = 0; i < variables.length; i++) {
+                const v = variables[i];
+                const dist = Math.sqrt((x - v.x) ** 2 + (y - v.y) ** 2);
+                if (dist < 30) return i;
+            }
+            return null;
+        }
+
+        function drawCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw links
+            links.forEach(link => {
+                const from = variables[link.from];
+                const to = variables[link.to];
+
+                ctx.beginPath();
+                ctx.moveTo(from.x, from.y);
+                ctx.lineTo(to.x, to.y);
+                ctx.strokeStyle = link.type === '+' ? '#2563eb' : '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw arrow
+                const angle = Math.atan2(to.y - from.y, to.x - from.x);
+                const arrowSize = 10;
+                ctx.beginPath();
+                ctx.moveTo(to.x, to.y);
+                ctx.lineTo(
+                    to.x - arrowSize * Math.cos(angle - Math.PI / 6),
+                    to.y - arrowSize * Math.sin(angle - Math.PI / 6)
+                );
+                ctx.lineTo(
+                    to.x - arrowSize * Math.cos(angle + Math.PI / 6),
+                    to.y - arrowSize * Math.sin(angle + Math.PI / 6)
+                );
+                ctx.closePath();
+                ctx.fillStyle = link.type === '+' ? '#2563eb' : '#ef4444';
+                ctx.fill();
+
+                // Draw label
+                const midX = (from.x + to.x) / 2;
+                const midY = (from.y + to.y) / 2;
+                ctx.fillStyle = link.type === '+' ? '#2563eb' : '#ef4444';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillText(link.type, midX, midY);
+            });
+
+            // Draw variables
+            variables.forEach(v => {
+                ctx.beginPath();
+                ctx.arc(v.x, v.y, 30, 0, 2 * Math.PI);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(v.name, v.x, v.y);
+            });
+        }
+
+        function clearCanvas() {
+            variables = [];
+            links = [];
+            selectedVar = null;
+            drawCanvas();
+        }
+
+        // Glossary toggle
+        function toggleGlossary(index) {
+            const content = document.getElementById(`glossary-${index}`);
+            const btn = event.target;
+
+            content.classList.toggle('expanded');
+            btn.classList.toggle('expanded');
+        }
+
+        // Initialize
+        drawCanvas();
+    </script>
+</body>
+</html>
